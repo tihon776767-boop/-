@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👥 итд</title>
+    <style>
+        :root {
+            --bg: #0a0a0f; --surface: #14141f; --surface2: #1a1a2a; --surface3: #1f1f32;
+            --text: #e8e8f0; --text2: #b0b0c0; --text3: #787890;
+            --accent: #7c3aed; --accent2: #a78bfa; --gold: #f59e0b;
+            --like: #ef4444; --green: #10b981; --border: #ffffff0a;
+            --radius: 16px; --radius-sm: 10px; --radius-xs: 8px;
+            --shadow: 0 4px 30px #00000033; --transition: 0.25s ease;
+            --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font); background: var(--bg); color: var(--text);
+            min-height: 100vh; display: flex; justify-content: center;
+            background-attachment: fixed; transition: background 0.3s, color 0.3s;
+        }
+        body.theme-dark { --bg:#0a0a0f; --surface:#14141f; --surface2:#1a1a2a; --surface3:#1f1f32; --accent:#7c3aed; --accent2:#a78bfa; background-image:radial-gradient(ellipse at 30% 10%, #7c3aed15 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, #f59e0b08 0%, transparent 60%); }
+        body.theme-purple { --bg:#0d0b1a; --surface:#191630; --surface2:#1f1b3a; --surface3:#252048; --accent:#a855f7; --accent2:#c084fc; background-image:radial-gradient(ellipse at 30% 10%, #a855f720 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, #7c3aed10 0%, transparent 60%); }
+        body.theme-gold { --bg:#1a1600; --surface:#241e00; --surface2:#2e2600; --surface3:#383000; --accent:#f59e0b; --accent2:#fbbf24; background-image:radial-gradient(ellipse at 30% 10%, #f59e0b20 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, #d9770610 0%, transparent 60%); }
+        body.theme-green { --bg:#001a0f; --surface:#002414; --surface2:#00301c; --surface3:#003c24; --accent:#10b981; --accent2:#34d399; background-image:radial-gradient(ellipse at 30% 10%, #10b98120 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, #05966910 0%, transparent 60%); }
+        body.theme-blue { --bg:#000a1a; --surface:#001424; --surface2:#001e30; --surface3:#00283c; --accent:#3b82f6; --accent2:#60a5fa; background-image:radial-gradient(ellipse at 30% 10%, #3b82f620 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, #1d4ed810 0%, transparent 60%); }
+        body.theme-red { --bg:#1a0000; --surface:#240000; --surface2:#300000; --surface3:#3c0000; --accent:#ef4444; --accent2:#f87171; background-image:radial-gradient(ellipse at 30% 10%, #ef444420 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, #dc262610 0%, transparent 60%); }
+        .app { width: 100%; max-width: 680px; min-height: 100vh; display: flex; flex-direction: column; padding: 0 12px 100px; position: relative; }
+        .header { position: sticky; top: 0; z-index: 100; background: #0a0a0fee; backdrop-filter: blur(20px); padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); gap: 8px; }
+        .header-brand { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+        .header-logo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), #a855f7); display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 20px #7c3aed66; }
+        .header-title { font-weight: 700; font-size: 1.2rem; background: linear-gradient(135deg, #e8e8f0, #c4b5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header-actions { display: flex; align-items: center; gap: 6px; }
+        .btn { padding: 8px 14px; border-radius: 50px; border: none; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: var(--transition); display: flex; align-items: center; gap: 5px; font-family: var(--font); white-space: nowrap; background: transparent; color: var(--text2); }
+        .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 16px #7c3aed44; }
+        .btn-outline { border: 1.5px solid #ffffff20; }
+        .btn-premium { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 700; border: none; }
+        .btn-sm { padding: 6px 12px; font-size: 0.75rem; }
+        .btn-vk { background: #2787F5; color: #fff; }
+        .user-greeting { font-size: 0.85rem; color: var(--text2); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .user-greeting span { color: #fff; font-weight: 600; }
+        .fab { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 8px 24px #7c3aed66; cursor: pointer; z-index: 150; border: none; }
+        .post { background: var(--surface); border-radius: var(--radius); margin-top: 14px; border: 1px solid var(--border); padding: 14px; animation: fadeInUp 0.4s; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: #6366f1; display: flex; align-items: center; justify-content: center; font-weight: 700; cursor: pointer; }
+        .post-user { flex: 1; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .post-username { font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+        .badge { font-size: 0.6rem; padding: 2px 6px; border-radius: 50px; font-weight: 700; }
+        .badge-premium { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; }
+        .badge-verified { background: var(--accent); color: #fff; }
+        .badge-vk { background: #2787F5; color: #fff; }
+        .badge-friend { background: #10b981; color: #fff; }
+        .subscribe-btn { font-size: 0.7rem; padding: 4px 12px; border-radius: 50px; cursor: pointer; font-weight: 600; border: 1.5px solid #ffffff25; background: transparent; color: var(--text2); margin-left: auto; }
+        .subscribe-btn.subscribed { background: #ffffff12; border-color: #ffffff40; color: #fff; }
+        .post-content { margin: 8px 0; font-size: 0.9rem; line-height: 1.4; }
+        .post-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+        .action-group { display: flex; gap: 4px; }
+        .action-btn { display: flex; align-items: center; gap: 4px; padding: 6px 10px; border-radius: 50px; cursor: pointer; font-size: 0.8rem; background: transparent; border: none; color: var(--text2); font-family: var(--font); }
+        .action-btn.liked { color: var(--like); }
+        .action-btn.saved { color: #f59e0b; }
+        .comments-section { margin-top: 10px; display: none; }
+        .comments-section.open { display: block; }
+        .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--surface3); color: #fff; padding: 12px 24px; border-radius: 50px; font-weight: 600; z-index: 300; animation: toastIn 0.4s, toastOut 0.4s 1.8s forwards; }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(30px); } }
+        @keyframes toastOut { to { opacity: 0; transform: translateX(-50%) translateY(-20px); } }
+        .admin-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: var(--surface2); padding: 16px; border-radius: var(--radius-sm); text-align: center; }
+        .stat-card .value { font-size: 1.8rem; font-weight: 700; color: #fff; }
+        .stat-card .label { font-size: 0.8rem; color: var(--text3); }
+        .tabs { display: flex; gap: 4px; margin: 10px 0; overflow-x: auto; scrollbar-width: none; }
+        .tab { padding: 8px 16px; border-radius: 50px; cursor: pointer; font-weight: 600; font-size: 0.8rem; white-space: nowrap; background: transparent; color: var(--text3); border: 1.5px solid transparent; }
+        .tab.active { background: var(--surface2); color: #fff; border-color: #ffffff20; }
+        .theme-option { width: 60px; height: 60px; border-radius: 12px; cursor: pointer; margin: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 3px solid transparent; transition: 0.2s; }
+        .theme-option:hover { border-color: #fff; }
+        .theme-option.selected { border-color: var(--accent); box-shadow: 0 0 15px var(--accent); }
+        .btn-grant-premium { background: #f59e0b; color: #000; font-weight: 700; }
+        .btn-grant-verify { background: #7c3aed; color: #fff; font-weight: 700; }
+        .btn-disabled { opacity: 0.5; pointer-events: none; }
+    </style>
+</head>
+<body>
+<div class="app" id="app">
+    <header class="header">
+        <div class="header-brand" onclick="resetFeed()"><div class="header-logo">👥</div><span class="header-title">итд</span></div>
+        <div class="header-actions" id="headerActions"></div>
+    </header>
+    <div class="premium-banner" id="premiumBanner" style="display:none; background:#1a1400; padding:10px; border-radius:10px; margin-top:10px;">👑 Premium активен! (выдан администратором)</div>
+    <button class="fab" onclick="openCreatePost()" title="Создать пост">✚</button>
+    <div class="create-post collapsed" id="createPostSection" style="display:none; margin-top:10px;">
+        <textarea id="postText" placeholder="Что нового? #мысли" style="width:100%; background:var(--surface2); border:none; color:#fff; padding:10px; border-radius:10px;"></textarea>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+            <button class="btn btn-primary btn-sm" onclick="publishPost()">Опубликовать</button>
+            <button class="btn btn-outline btn-sm" onclick="cancelCreatePost()">Отмена</button>
+        </div>
+    </div>
+    <div class="tabs" id="tabs">
+        <div class="tab active" data-filter="all" onclick="setFilter('all', this)">🔥 Все</div>
+        <div class="tab" data-filter="friends" onclick="setFilter('friends', this)">👥 Друзья</div>
+        <div class="tab" data-filter="subscribed" onclick="setFilter('subscribed', this)">⭐ Подписки</div>
+        <div class="tab" data-filter="premium" onclick="setFilter('premium', this)">👑 Premium</div>
+        <div class="tab" data-filter="saved" onclick="setFilter('saved', this)">🔖 Сохранённые</div>
+    </div>
+    <div id="feed"></div>
+    <div id="emptyState" style="display:none; text-align:center; padding:40px;">📭 Пока нет публикаций</div>
+</div>
+
+<div class="modal-overlay" id="authModal" style="display:none;" onclick="closeAuthModal(event)"><div class="modal" onclick="event.stopPropagation()"><h3 id="authModalTitle">Вход</h3><div id="authError" style="color:red;"></div><input id="authUsername" placeholder="Имя"><input id="authPassword" type="password" placeholder="Пароль"><button class="btn btn-primary" id="authSubmitBtn">Войти</button><button class="btn btn-vk btn-sm" onclick="vkLogin()" style="width:100%; margin-top:8px;">🔵 Войти через ВК</button><div id="authSwitch" style="margin-top:8px; cursor:pointer; color:var(--text3);">Нет аккаунта? Зарегистрироваться</div></div></div>
+<div class="modal-overlay" id="profileModal" style="display:none;" onclick="closeProfileModal(event)"><div class="modal" id="profileContent" onclick="event.stopPropagation()"></div></div>
+<div class="modal-overlay" id="adminModal" style="display:none;" onclick="closeAdminModal(event)"><div class="modal" id="adminContent" onclick="event.stopPropagation()" style="max-width:600px;"></div></div>
+<div class="modal-overlay" id="shareModal" style="display:none;" onclick="closeShareModal(event)"><div class="modal" onclick="event.stopPropagation()"><h3>📤 Поделиться</h3><div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="shareAction('telegram')">✈️ Telegram</button><button class="btn btn-vk btn-sm" onclick="shareAction('vk')">🔵 VK</button><button class="btn btn-outline btn-sm" onclick="shareAction('copy')">🔗 Копировать</button></div></div></div>
+<div class="modal-overlay" id="themeModal" style="display:none;" onclick="closeThemeModal(event)"><div class="modal" onclick="event.stopPropagation()"><h3>🎨 Выберите тему</h3><div id="themeOptions" style="display:flex; flex-wrap:wrap; justify-content:center;"></div></div></div>
+<div id="toastContainer"></div>
+
+<script>
+    (function() {
+        // ========== БАЗА ДАННЫХ ==========
+        const DB_USERS = 'rhythm_users_db';
+        const DB_POSTS = 'rhythm_posts_db';
+
+        function saveUsers(users) {
+            localStorage.setItem(DB_USERS, JSON.stringify(users));
+        }
+        function loadUsers() {
+            const raw = localStorage.getItem(DB_USERS);
+            return raw ? JSON.parse(raw) : {};
+        }
+        function savePosts(posts) {
+            localStorage.setItem(DB_POSTS, JSON.stringify(posts));
+        }
+        function loadPosts() {
+            const raw = localStorage.getItem(DB_POSTS);
+            return raw ? JSON.parse(raw) : [];
+        }
+
+        // ========== СОСТОЯНИЕ ==========
+        const themes = ['dark', 'purple', 'gold', 'green', 'blue', 'red'];
+        let state = {
+            currentUserId: null,
+            users: {},
+            posts: [],
+            verificationRequests: [],
+            friendRequests: [],
+            currentFilter: 'all',
+            shareTargetPostId: null
+        };
+
+        function createTihon() {
+            return { id: 'tihon', name: 'Tihon', password: '12345678900g', isPremium: true, verified: true, isAdmin: true, isBanned: false, likedPosts: {}, subscriptions: {}, savedPosts: {}, theme: 'dark', vkLinked: false, friends: [] };
+        }
+
+        function loadState() {
+            state.users = loadUsers();
+            state.posts = loadPosts();
+            // Загружаем заявки и друзей – они хранятся внутри пользователей/постов? Нет, это отдельные массивы. В старой версии они были в общем ключе. Теперь сохраним их в users и posts? Упростим: verificationRequests и friendRequests не храним отдельно, они временные. Но для сохранения добавим их в users? Лучше хранить в localStorage отдельными ключами. Сделаем DB_REQUESTS. Но для простоты оставим в оперативной памяти, они не критичны. При перезагрузке потеряются, но это допустимо.
+            state.friendRequests = [];
+            state.verificationRequests = [];
+            const stored = localStorage.getItem('rhythm_requests_db');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    state.verificationRequests = parsed.verificationRequests || [];
+                    state.friendRequests = parsed.friendRequests || [];
+                } catch (e) {}
+            }
+            if (!state.users['tihon']) state.users['tihon'] = createTihon();
+            if (!state.currentUserId && state.users['tihon']) state.currentUserId = 'tihon';
+            applyCurrentTheme();
+            saveAll();
+        }
+
+        function saveAll() {
+            saveUsers(state.users);
+            savePosts(state.posts);
+            // сохраним заявки
+            localStorage.setItem('rhythm_requests_db', JSON.stringify({
+                verificationRequests: state.verificationRequests,
+                friendRequests: state.friendRequests
+            }));
+        }
+
+        function resetToTihon() {
+            state.users = { 'tihon': createTihon() };
+            state.posts = [];
+            state.verificationRequests = [];
+            state.friendRequests = [];
+            state.currentUserId = 'tihon';
+            saveAll();
+        }
+
+        function getCurrentUser() { return state.currentUserId ? state.users[state.currentUserId] : null; }
+        function isLoggedIn() { return !!getCurrentUser(); }
+        function getUserById(id) { return state.users[id] || { id, name: id||'Аноним', verified: false, isPremium: false, isBanned: false, vkLinked: false, friends: [] }; }
+        function escapeHTML(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+        function getTimeAgo(ts) { const m=Math.floor((Date.now()-ts)/60000); if(m<1)return'Только что'; if(m<60)return m+' мин.'; const h=Math.floor(m/60); if(h<24)return h+' ч.'; return Math.floor(h/24)+' д.'; }
+
+        function applyCurrentTheme() {
+            const user = getCurrentUser();
+            const theme = user?.theme || 'dark';
+            document.body.className = `theme-${theme}`;
+        }
+
+        function renderAll() { renderHeader(); renderPremiumBanner(); renderFeed(); applyCurrentTheme(); }
+        function renderHeader() {
+            const user = getCurrentUser();
+            const html = user ? `
+                <div class="user-greeting" onclick="openProfile('${user.id}')">👤 <span>${escapeHTML(user.name)}${user.verified?' ✓':''}${user.vkLinked?' <span class="badge badge-vk">VK</span>':''}</span></div>
+                <button class="btn btn-outline btn-sm" onclick="openThemeModal()">🎨</button>
+                ${user.id === 'tihon' ? '<button class="btn btn-outline btn-sm" onclick="openAdminPanel()">⚙️ Админ</button>' : ''}
+                <button class="btn btn-outline btn-sm" onclick="logout()">↪️</button>
+                ${user.isAdmin ? '<button class="btn btn-premium btn-sm" onclick="buyPremium()">👑 Premium</button>' : '<button class="btn btn-outline btn-sm" onclick="showToast(\'🔒 Premium — в разработке\')">🔒 Premium</button>'}
+            ` : `
+                <button class="btn btn-outline btn-sm" onclick="openAuthModal('login')">Войти</button>
+            `;
+            document.getElementById('headerActions').innerHTML = html;
+        }
+        function renderPremiumBanner() { document.getElementById('premiumBanner').style.display = getCurrentUser()?.isPremium ? 'block' : 'none'; }
+        function renderFeed() {
+            let posts = [...state.posts];
+            const user = getCurrentUser();
+            if (state.currentFilter === 'friends' && user) {
+                const friendIds = user.friends || [];
+                posts = posts.filter(p => friendIds.includes(p.userId));
+            } else if (state.currentFilter === 'subscribed') {
+                posts = user ? posts.filter(p => user.subscriptions?.[p.userId]) : [];
+            } else if (state.currentFilter === 'premium') {
+                posts = posts.filter(p => p.isPremium);
+            } else if (state.currentFilter === 'saved') {
+                posts = user ? posts.filter(p => user.savedPosts?.[p.id]) : [];
+            }
+            posts.sort((a,b) => b.timestamp - a.timestamp);
+            document.getElementById('feed').innerHTML = posts.map(p => renderPost(p, user)).join('');
+            document.getElementById('emptyState').style.display = posts.length ? 'none' : 'block';
+        }
+        function renderPost(post, user) {
+            const author = getUserById(post.userId);
+            const liked = user?.likedPosts?.[post.id];
+            const saved = user?.savedPosts?.[post.id];
+            const isSubscribed = user?.subscriptions?.[post.userId];
+            const isFriend = user && user.friends && user.friends.includes(post.userId);
+            return `<div class="post">
+                <div class="post-header">
+                    <div class="post-avatar" onclick="openProfile('${post.userId}')">${author.name.charAt(0)}</div>
+                    <div class="post-user">
+                        <span class="post-username" onclick="openProfile('${post.userId}')">${escapeHTML(author.name)} ${author.verified?'<span class="badge badge-verified">✓</span>':''} ${author.vkLinked?'<span class="badge badge-vk">VK</span>':''} ${isFriend?'<span class="badge badge-friend">Друг</span>':''} ${post.isPremium?'<span class="badge badge-premium">👑</span>':''}</span>
+                        <span style="color:var(--text3);font-size:0.75rem;">· ${getTimeAgo(post.timestamp)}</span>
+                    </div>
+                    ${user && post.userId!==user.id ? `<button class="subscribe-btn ${isSubscribed?'subscribed':''}" onclick="event.stopPropagation();toggleSubscription('${post.userId}')">${isSubscribed?'✓':'+'} Подписаться</button>` : ''}
+                </div>
+                <div class="post-content">${escapeHTML(post.text).replace(/#(\w+)/g,'<span style="color:var(--accent2);">#$1</span>')}</div>
+                <div class="post-actions">
+                    <div class="action-group">
+                        <button class="action-btn ${liked?'liked':''}" onclick="toggleLike('${post.id}')">${liked?'❤️':'🤍'} <span>${post.likes}</span></button>
+                        <button class="action-btn" onclick="toggleComments('${post.id}')">💬 <span>${post.comments?.length||0}</span></button>
+                    </div>
+                    <div class="action-group">
+                        <button class="action-btn ${saved?'saved':''}" onclick="toggleSave('${post.id}')">${saved?'🔖':'🏷️'}</button>
+                        <button class="action-btn" onclick="openShareModal('${post.id}')">📤</button>
+                    </div>
+                </div>
+                <div class="comments-section" id="comments-${post.id}">
+                    ${(post.comments||[]).map(c => `<div style="margin:4px 0;font-size:0.8rem;"><b>${escapeHTML(getUserById(c.userId).name)}</b> ${escapeHTML(c.text)}</div>`).join('')}
+                    <div style="display:flex; gap:6px; margin-top:6px;">
+                        <input id="comment-input-${post.id}" placeholder="Добавить комментарий..." style="flex:1; background:var(--surface2); border:none; color:#fff; padding:6px 10px; border-radius:20px;">
+                        <button class="btn btn-primary btn-sm" onclick="addComment('${post.id}')">Отпр.</button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        window.toggleLike = (id) => { if(!isLoggedIn())return openAuthModal(); const u=getCurrentUser(); if(u.isBanned){showToast('⛔ Вы забанены');return;} const p=state.posts.find(x=>x.id===id); if(!p)return; u.likedPosts=u.likedPosts||{}; if(u.likedPosts[id]){delete u.likedPosts[id];p.likes--;}else{u.likedPosts[id]=true;p.likes++;} saveAll();renderFeed(); };
+        window.toggleSave = (id) => { if(!isLoggedIn())return openAuthModal(); const u=getCurrentUser(); if(u.isBanned){showToast('⛔ Вы забанены');return;} u.savedPosts=u.savedPosts||{}; if(u.savedPosts[id]){delete u.savedPosts[id];}else{u.savedPosts[id]=true;} saveAll();renderFeed(); };
+        window.toggleSubscription = (uid) => { if(!isLoggedIn())return openAuthModal(); const u=getCurrentUser(); if(u.isBanned){showToast('⛔ Вы забанены');return;} u.subscriptions=u.subscriptions||{}; if(u.subscriptions[uid]){delete u.subscriptions[uid];}else{u.subscriptions[uid]=true;} saveAll();renderAll(); };
+        window.toggleComments = (id) => { document.getElementById('comments-'+id).classList.toggle('open'); };
+        window.addComment = (id) => { if(!isLoggedIn())return openAuthModal(); const u=getCurrentUser(); if(u.isBanned){showToast('⛔ Вы забанены');return;} const inp=document.getElementById('comment-input-'+id); const text=inp.value.trim(); if(!text)return; const p=state.posts.find(x=>x.id===id); p.comments=p.comments||[]; p.comments.push({userId:u.id,text}); inp.value=''; saveAll();renderFeed(); document.getElementById('comments-'+id).classList.add('open'); };
+        window.openShareModal = (id) => { state.shareTargetPostId=id; document.getElementById('shareModal').style.display='flex'; };
+        window.shareAction = (platform) => { const url='https://rhythm.app/post/'+state.shareTargetPostId; if(platform==='copy')navigator.clipboard.writeText(url).then(()=>showToast('Ссылка скопирована')); else if(platform==='vk') window.open('https://vk.com/share.php?url='+encodeURIComponent(url)); else window.open('https://'+platform+'.com/share?url='+encodeURIComponent(url)); document.getElementById('shareModal').style.display='none'; };
+
+        // Друзья
+        function areFriends(userId1, userId2) {
+            const u1 = state.users[userId1];
+            const u2 = state.users[userId2];
+            return u1 && u2 && u1.friends && u1.friends.includes(userId2) && u2.friends && u2.friends.includes(userId1);
+        }
+        function getFriendRequestStatus(fromUserId, toUserId) {
+            return state.friendRequests.find(r => r.fromUserId === fromUserId && r.toUserId === toUserId && r.status === 'pending');
+        }
+        window.sendFriendRequest = function(toUserId) {
+            if (!isLoggedIn()) return openAuthModal();
+            const fromUser = getCurrentUser();
+            if (fromUser.id === toUserId) return;
+            if (areFriends(fromUser.id, toUserId)) { showToast('Вы уже друзья'); return; }
+            if (getFriendRequestStatus(fromUser.id, toUserId)) { showToast('Заявка уже отправлена'); return; }
+            state.friendRequests.push({ id: 'fr_' + Date.now(), fromUserId: fromUser.id, toUserId, status: 'pending' });
+            saveAll();
+            showToast('Заявка в друзья отправлена');
+            if (document.getElementById('profileModal').style.display === 'flex') openProfile(toUserId);
+        };
+        window.acceptFriendRequest = function(requestId) {
+            const req = state.friendRequests.find(r => r.id === requestId);
+            if (!req) return;
+            const u1 = state.users[req.fromUserId];
+            const u2 = state.users[req.toUserId];
+            if (u1 && u2) {
+                u1.friends = u1.friends || [];
+                u2.friends = u2.friends || [];
+                if (!u1.friends.includes(u2.id)) u1.friends.push(u2.id);
+                if (!u2.friends.includes(u1.id)) u2.friends.push(u1.id);
+            }
+            req.status = 'accepted';
+            saveAll();
+            renderAll();
+            showToast('Теперь вы друзья!');
+            if (document.getElementById('profileModal').style.display === 'flex') openProfile(getCurrentUser().id);
+        };
+        window.rejectFriendRequest = function(requestId) {
+            const req = state.friendRequests.find(r => r.id === requestId);
+            if (req) req.status = 'rejected';
+            saveAll();
+            if (document.getElementById('profileModal').style.display === 'flex') openProfile(getCurrentUser().id);
+        };
+        window.removeFriend = function(friendId) {
+            if (!isLoggedIn()) return;
+            const currentUser = getCurrentUser();
+            const friendUser = state.users[friendId];
+            if (!friendUser) return;
+            currentUser.friends = (currentUser.friends || []).filter(id => id !== friendId);
+            friendUser.friends = (friendUser.friends || []).filter(id => id !== currentUser.id);
+            saveAll();
+            renderAll();
+            showToast('Пользователь удалён из друзей');
+            if (document.getElementById('profileModal').style.display === 'flex') openProfile(friendId);
+        };
+
+        window.openProfile = function(uid) {
+            const u = getUserById(uid);
+            const cur = getCurrentUser();
+            const posts = state.posts.filter(p => p.userId === uid);
+            const friendsCount = (u.friends || []).length;
+            const isOwn = cur && cur.id === uid;
+            const isFriend = cur && areFriends(cur.id, uid);
+            const pendingSent = cur && getFriendRequestStatus(cur.id, uid);
+            const pendingReceived = cur && state.friendRequests.find(r => r.toUserId === cur.id && r.fromUserId === uid && r.status === 'pending');
+            let friendActionHtml = '';
+            if (cur && !isOwn) {
+                if (isFriend) {
+                    friendActionHtml = `<button class="btn btn-outline btn-sm" onclick="removeFriend('${uid}')">Удалить из друзей</button>`;
+                } else if (pendingSent) {
+                    friendActionHtml = `<span style="color:var(--accent2);">Заявка отправлена</span>`;
+                } else if (pendingReceived) {
+                    friendActionHtml = `<button class="btn btn-primary btn-sm" onclick="acceptFriendRequest('${pendingReceived.id}')">✓ Принять</button>
+                                        <button class="btn btn-outline btn-sm" onclick="rejectFriendRequest('${pendingReceived.id}')">✗ Отклонить</button>`;
+                } else {
+                    friendActionHtml = `<button class="btn btn-primary btn-sm" onclick="sendFriendRequest('${uid}')">➕ Добавить в друзья</button>`;
+                }
+            }
+            const pending = state.verificationRequests.find(r => r.userId === uid && r.status === 'pending');
+            document.getElementById('profileContent').innerHTML = `
+                <h3>${escapeHTML(u.name)} ${u.verified?'<span class="badge badge-verified">✓</span>':''} ${u.vkLinked?'<span class="badge badge-vk">VK</span>':''} ${u.isPremium?'<span class="badge badge-premium">👑</span>':''}</h3>
+                <p>Постов: ${posts.length} · Друзей: ${friendsCount}</p>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+                    ${friendActionHtml}
+                    ${cur && !isOwn ? `<button class="btn btn-outline btn-sm" onclick="toggleSubscription('${uid}');openProfile('${uid}')">${cur.subscriptions?.[uid]?'Отписаться':'Подписаться'}</button>` : ''}
+                    ${isOwn && !u.verified && !pending ? `<button class="btn btn-primary btn-sm" onclick="requestVerification()">📹 Запросить галочку</button>` : ''}
+                    ${pending ? '<p>⏳ Заявка на рассмотрении</p>' : ''}
+                </div>
+                <hr style="border-color:#ffffff10; margin: 16px 0;">
+                <h4>Посты</h4>
+                ${posts.length ? posts.map(p => `<div style="margin:8px 0; font-size:0.9rem;">${escapeHTML(p.text.substring(0,60))} - ${getTimeAgo(p.timestamp)}</div>`).join('') : '<p style="color:var(--text3)">Нет постов</p>'}
+            `;
+            document.getElementById('profileModal').style.display = 'flex';
+        };
+        window.requestVerification = () => { const link=prompt('Ссылка на видео:'); if(!link)return; state.verificationRequests.push({id:'vr_'+Date.now(),userId:getCurrentUser().id,videoLink:link,status:'pending'}); saveAll();showToast('Заявка отправлена');document.getElementById('profileModal').style.display='none'; };
+
+        window.vkLogin = function() {
+            const name = prompt('Введите ваше имя из ВКонтакте:');
+            if (!name) return;
+            const id = 'vk_' + Date.now();
+            state.users[id] = { id, name, password: '', isPremium: false, verified: false, isBanned: false, likedPosts:{}, subscriptions:{}, savedPosts:{}, theme:'dark', vkLinked: true, friends: [] };
+            state.currentUserId = id;
+            saveAll(); document.getElementById('authModal').style.display = 'none'; renderAll();
+            showToast(`Добро пожаловать, ${name}! (ВК)`);
+        };
+
+        // Админ-панель (с очисткой базы постов)
+        window.openAdminPanel = function() {
+            if(!getCurrentUser()||getCurrentUser().id!=='tihon'){showToast('⛔ Только для Tihon');return;}
+            const totalPosts = state.posts.length;
+            const totalUsers = Object.keys(state.users).length;
+            const premiumUsers = Object.values(state.users).filter(u=>u.isPremium).length;
+            const verifiedUsers = Object.values(state.users).filter(u=>u.verified).length;
+            const bannedUsers = Object.values(state.users).filter(u=>u.isBanned).length;
+            const pendingReqs = state.verificationRequests.filter(r=>r.status==='pending');
+            const totalFriendRequests = state.friendRequests.filter(r=>r.status==='pending').length;
+            const totalFriendships = Object.values(state.users).reduce((sum, u) => sum + (u.friends||[]).length, 0) / 2;
+
+            let html = `<h3>⚙️ Админ-панель (Tihon)</h3>
+            <div class="admin-stats">
+                <div class="stat-card"><div class="value">${totalPosts}</div><div class="label">Постов</div></div>
+                <div class="stat-card"><div class="value">${totalUsers}</div><div class="label">Участников</div></div>
+                <div class="stat-card"><div class="value">${premiumUsers}</div><div class="label">Premium</div></div>
+                <div class="stat-card"><div class="value">${verifiedUsers}</div><div class="label">С галочкой</div></div>
+                <div class="stat-card"><div class="value">${bannedUsers}</div><div class="label">Забанено</div></div>
+                <div class="stat-card"><div class="value">${totalFriendRequests}</div><div class="label">Заявок в друзья</div></div>
+                <div class="stat-card"><div class="value">${totalFriendships}</div><div class="label">Дружеских связей</div></div>
+            </div>
+            <h4>👥 Пользователи</h4>
+            <div style="max-height:300px;overflow-y:auto;">${Object.values(state.users).map(u=>`<div style="display:flex;justify-content:space-between;padding:8px;background:var(--surface2);border-radius:8px;margin:4px 0;"><span><b>${escapeHTML(u.name)}</b> ${u.verified?'✓':''} ${u.vkLinked?'<span class="badge badge-vk">VK</span>':''} ${u.isPremium?'👑':''} ${u.isBanned?'🚫':''} Друзей:${(u.friends||[]).length}</span><div>${u.id!=='tihon' ? `
+                <button class="btn btn-sm btn-outline" onclick="toggleUserBan('${u.id}')">${u.isBanned?'Разбанить':'Забанить'}</button>
+                <button class="btn btn-sm btn-grant-premium" onclick="toggleUserPremium('${u.id}')">${u.isPremium?'-Premium':'+Premium'}</button>
+                <button class="btn btn-sm btn-grant-verify" onclick="toggleUserVerify('${u.id}')">${u.verified?'-Галочка':'+Галочка'}</button>
+            ` : `
+                <button class="btn btn-sm btn-outline btn-disabled" title="Нельзя изменить себя">Забанить</button>
+                <button class="btn btn-sm btn-grant-premium btn-disabled" title="Нельзя изменить себя">+Premium</button>
+                <button class="btn btn-sm btn-grant-verify btn-disabled" title="Нельзя изменить себя">+Галочка</button>
+            `}</div></div>`).join('')}</div>
+            <h4>Заявки в друзья (${totalFriendRequests})</h4>
+            ${state.friendRequests.filter(r=>r.status==='pending').map(r=>`<div style="display:flex;justify-content:space-between;padding:6px;background:var(--surface2);border-radius:8px;margin:4px 0;"><span><b>${escapeHTML(getUserById(r.fromUserId).name)}</b> хочет дружить с <b>${escapeHTML(getUserById(r.toUserId).name)}</b></span></div>`).join('') || '<p>Нет заявок</p>'}
+            <div style="margin-top:16px;">
+                <button class="btn btn-sm btn-outline" onclick="clearPostsDB()">🗑 Очистить базу постов</button>
+            </div>
+            `;
+            document.getElementById('adminContent').innerHTML = html;
+            document.getElementById('adminModal').style.display = 'flex';
+        };
+
+        window.clearPostsDB = function() {
+            if (!getCurrentUser()?.isAdmin) return;
+            if (confirm('Вы уверены? Все посты будут удалены безвозвратно.')) {
+                state.posts = [];
+                saveAll();
+                renderAll();
+                showToast('База постов очищена');
+                openAdminPanel();
+            }
+        };
+
+        window.toggleUserBan = (uid)=>{ if(getCurrentUser()?.id!=='tihon')return; const u=state.users[uid]; if(!u)return; u.isBanned=!u.isBanned; saveAll(); openAdminPanel(); };
+        window.toggleUserPremium = (uid)=>{ if(getCurrentUser()?.id!=='tihon')return; const u=state.users[uid]; if(!u)return; u.isPremium=!u.isPremium; saveAll(); renderAll(); openAdminPanel(); };
+        window.toggleUserVerify = (uid)=>{ if(getCurrentUser()?.id!=='tihon')return; const u=state.users[uid]; if(!u)return; u.verified=!u.verified; saveAll(); renderAll(); openAdminPanel(); };
+
+        window.closeAdminModal = (e)=>{ if(e.target===document.getElementById('adminModal')) document.getElementById('adminModal').style.display='none'; };
+        window.closeProfileModal = (e)=>{ if(e.target===document.getElementById('profileModal')) document.getElementById('profileModal').style.display='none'; };
+        window.closeAuthModal = (e)=>{ if(e.target===document.getElementById('authModal')) document.getElementById('authModal').style.display='none'; };
+        window.closeShareModal = (e)=>{ if(e.target===document.getElementById('shareModal')) document.getElementById('shareModal').style.display='none'; };
+
+        let authMode = 'login';
+        window.openAuthModal = function(mode = 'login') {
+            authMode = mode;
+            document.getElementById('authModalTitle').textContent = mode==='login'?'Вход':'Регистрация';
+            document.getElementById('authSubmitBtn').textContent = mode==='login'?'Войти':'Зарегистрироваться';
+            document.getElementById('authSwitch').textContent = mode==='login'?'Нет аккаунта? Зарегистрироваться':'Уже есть аккаунт? Войти';
+            document.getElementById('authModal').style.display = 'flex';
+        };
+        document.getElementById('authSwitch').onclick = () => openAuthModal(authMode==='login'?'register':'login');
+        document.getElementById('authSubmitBtn').onclick = () => {
+            const name = document.getElementById('authUsername').value.trim();
+            const pass = document.getElementById('authPassword').value.trim();
+            if(!name||!pass) return;
+            if(authMode==='register') {
+                if(Object.values(state.users).find(u=>u.name.toLowerCase()===name.toLowerCase())) return;
+                const id = 'u_'+Date.now();
+                state.users[id] = { id, name, password:pass, isPremium:false, verified:false, isBanned:false, likedPosts:{}, subscriptions:{}, savedPosts:{}, theme:'dark', vkLinked:false, friends:[] };
+                state.currentUserId = id;
+                saveAll(); document.getElementById('authModal').style.display='none'; renderAll(); showToast(`Добро пожаловать, ${name}!`);
+            } else {
+                const user = Object.values(state.users).find(u=>u.name.toLowerCase()===name.toLowerCase() && u.password===pass);
+                if(!user) return;
+                state.currentUserId = user.id;
+                saveAll(); document.getElementById('authModal').style.display='none'; renderAll(); showToast(`С возвращением, ${user.name}!`);
+            }
+        };
+        window.logout = () => { state.currentUserId = null; renderAll(); showToast('Вы вышли'); };
+
+        window.buyPremium = function() {
+            const user = getCurrentUser();
+            if (!user || !user.isAdmin) { showToast('🔒 Premium — в разработке'); return; }
+            if (user.isPremium) { showToast('У вас уже есть Premium'); return; }
+            user.isPremium = true;
+            saveAll();
+            renderAll();
+            showToast('Premium активирован!');
+        };
+
+        window.openCreatePost = function() { if(!isLoggedIn()) return openAuthModal(); if(getCurrentUser().isBanned) { showToast('⛔ Вы забанены'); return; } document.getElementById('createPostSection').style.display='block'; window.scrollTo({top:0,behavior:'smooth'}); document.getElementById('postText').focus(); };
+        window.cancelCreatePost = function() { document.getElementById('createPostSection').style.display='none'; document.getElementById('postText').value=''; };
+        window.publishPost = function() {
+            if(!isLoggedIn()) return openAuthModal();
+            const user = getCurrentUser();
+            if(user.isBanned) { showToast('⛔ Вы забанены'); return; }
+            const text = document.getElementById('postText').value.trim();
+            if(!text) return;
+            state.posts.unshift({ id: 'p_'+Date.now(), userId: user.id, text, timestamp: Date.now(), likes: 0, comments: [], isPremium: user.isPremium });
+            saveAll();
+            cancelCreatePost();
+            renderAll();
+            showToast('Пост опубликован!');
+        };
+
+        window.setFilter = (f, el) => { state.currentFilter=f; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); renderFeed(); };
+        window.resetFeed = () => { state.currentFilter='all'; document.querySelector('.tab[data-filter="all"]').classList.add('active'); renderFeed(); };
+
+        function showToast(msg) {
+            const t = document.createElement('div'); t.className='toast'; t.textContent=msg;
+            document.getElementById('toastContainer').appendChild(t);
+            setTimeout(()=>t.remove(),2000);
+        }
+
+        window.openThemeModal = function() {
+            const user = getCurrentUser(); if(!user) return openAuthModal();
+            const currentTheme = user.theme || 'dark';
+            const icons = { dark:'🌑', purple:'🟣', gold:'🟡', green:'🟢', blue:'🔵', red:'🔴' };
+            const colors = { dark:'#0a0a0f', purple:'#4c1d95', gold:'#b45309', green:'#064e3b', blue:'#1e3a8a', red:'#7f1d1d' };
+            document.getElementById('themeOptions').innerHTML = themes.map(t => `
+                <div class="theme-option ${t===currentTheme?'selected':''}" onclick="setTheme('${t}')" style="background:${colors[t]};">${icons[t]}</div>
+            `).join('');
+            document.getElementById('themeModal').style.display = 'flex';
+        };
+        window.setTheme = function(theme) {
+            const user = getCurrentUser(); if(!user) return;
+            user.theme = theme; saveAll(); applyCurrentTheme();
+            document.getElementById('themeModal').style.display='none';
+            showToast(`Тема «${theme}» применена`);
+        };
+        window.closeThemeModal = (e) => { if(e.target===document.getElementById('themeModal')) document.getElementById('themeModal').style.display='none'; };
+
+        loadState();
+        renderAll();
+    })();
+</script>
+</body>
+</html>
